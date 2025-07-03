@@ -1,5 +1,5 @@
-let i = 5;
-let j = 4;
+const i = 5;
+const j = 4;
 
 console.log("resultado = ", i + j);
 console.log("resultado multiplicación =", i * j);
