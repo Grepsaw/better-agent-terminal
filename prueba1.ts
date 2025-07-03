@@ -1,7 +1,5 @@
-var i = 0;
-var j = 0;
-
-i = 3;
-j = 3;
+let i = 3;
+let j = 3;
 
 console.log("resultado = ", i + j)
+console.log("resultado multiplicación =", i * j);
