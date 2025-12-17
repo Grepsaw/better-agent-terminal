@@ -60,6 +60,40 @@ export function TerminalPanel({ terminalId }: TerminalPanelProps) {
       window.electronAPI.pty.write(terminalId, data)
     })
 
+    // Handle copy with Ctrl+Shift+C or selection
+    terminal.attachCustomKeyEventHandler((event) => {
+      // Ctrl+Shift+C for copy
+      if (event.ctrlKey && event.shiftKey && event.key === 'C') {
+        const selection = terminal.getSelection()
+        if (selection) {
+          navigator.clipboard.writeText(selection)
+        }
+        return false
+      }
+      // Ctrl+Shift+V for paste
+      if (event.ctrlKey && event.shiftKey && event.key === 'V') {
+        navigator.clipboard.readText().then((text) => {
+          window.electronAPI.pty.write(terminalId, text)
+        })
+        return false
+      }
+      return true
+    })
+
+    // Right-click context menu for copy/paste
+    containerRef.current.addEventListener('contextmenu', async (e) => {
+      e.preventDefault()
+      const selection = terminal.getSelection()
+      if (selection) {
+        await navigator.clipboard.writeText(selection)
+      } else {
+        const text = await navigator.clipboard.readText()
+        if (text) {
+          window.electronAPI.pty.write(terminalId, text)
+        }
+      }
+    })
+
     // Handle terminal output
     const unsubscribeOutput = window.electronAPI.pty.onOutput((id, data) => {
       if (id === terminalId) {

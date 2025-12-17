@@ -1,6 +1,25 @@
 import { useEffect, useState } from 'react'
 import type { TerminalInstance } from '../types'
 
+// Global preview cache - persists across component unmounts
+const previewCache = new Map<string, string>()
+
+// Global listener setup - only once
+let globalListenerSetup = false
+const setupGlobalListener = () => {
+  if (globalListenerSetup) return
+  globalListenerSetup = true
+
+  window.electronAPI.pty.onOutput((id, data) => {
+    const prev = previewCache.get(id) || ''
+    const combined = prev + data
+    // Keep last 8 lines, clean ANSI codes for readability
+    const cleaned = combined.replace(/\x1b\[[0-9;]*m/g, '')
+    const lines = cleaned.split('\n').slice(-8)
+    previewCache.set(id, lines.join('\n'))
+  })
+}
+
 interface TerminalThumbnailProps {
   terminal: TerminalInstance
   isActive: boolean
@@ -8,23 +27,19 @@ interface TerminalThumbnailProps {
 }
 
 export function TerminalThumbnail({ terminal, isActive, onClick }: TerminalThumbnailProps) {
-  const [preview, setPreview] = useState<string>('')
+  const [preview, setPreview] = useState<string>(previewCache.get(terminal.id) || '')
   const isClaudeCode = terminal.type === 'claude-code'
 
   useEffect(() => {
-    // Listen for terminal output to update preview
-    const unsubscribe = window.electronAPI.pty.onOutput((id, data) => {
-      if (id === terminal.id) {
-        // Keep last few lines for preview
-        setPreview(prev => {
-          const combined = prev + data
-          const lines = combined.split('\n').slice(-6)
-          return lines.join('\n')
-        })
-      }
-    })
+    setupGlobalListener()
 
-    return unsubscribe
+    // Poll for updates from cache
+    const interval = setInterval(() => {
+      const cached = previewCache.get(terminal.id) || ''
+      setPreview(cached)
+    }, 500)
+
+    return () => clearInterval(interval)
   }, [terminal.id])
 
   return (

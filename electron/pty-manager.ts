@@ -52,7 +52,12 @@ export class PtyManager {
     const { id, cwd, type } = options
 
     const shell = this.getDefaultShell()
-    const args: string[] = []
+    let args: string[] = []
+
+    // For PowerShell, bypass execution policy to allow unsigned scripts
+    if (shell.includes('powershell')) {
+      args = ['-ExecutionPolicy', 'Bypass', '-NoLogo']
+    }
 
     // Try node-pty first, fallback to child_process if it fails
     let usedPty = false
@@ -97,14 +102,14 @@ export class PtyManager {
     if (!usedPty) {
       try {
         // Fallback to child_process with proper stdio
-        // For PowerShell, we need special args to make it interactive and set UTF-8
-        let shellArgs = args
+        // For PowerShell, add -NoExit and UTF-8 command
+        let shellArgs = [...args]
         if (shell.includes('powershell')) {
-          shellArgs = [
+          shellArgs.push(
             '-NoExit',
             '-Command',
             '[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; [Console]::InputEncoding = [System.Text.Encoding]::UTF8; $OutputEncoding = [System.Text.Encoding]::UTF8'
-          ]
+          )
         }
 
         // Set UTF-8 environment variables
@@ -161,11 +166,9 @@ export class PtyManager {
       if (instance.usePty) {
         instance.process.write(data)
       } else {
-        // For child_process, write directly and echo back
+        // For child_process, write to stdin only (shell handles echo)
         const cp = instance.process as ChildProcess
         cp.stdin?.write(data)
-        // Echo input back to terminal for visibility
-        this.window.webContents.send('pty:output', id, data)
       }
     }
   }

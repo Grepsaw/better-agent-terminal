@@ -1,7 +1,7 @@
 import { useEffect, useCallback, useState } from 'react'
 import type { Workspace, TerminalInstance } from '../types'
 import { workspaceStore } from '../stores/workspace-store'
-import { MainPanel } from './MainPanel'
+import { TerminalPanel } from './TerminalPanel'
 import { ThumbnailBar } from './ThumbnailBar'
 import { CloseConfirmDialog } from './CloseConfirmDialog'
 
@@ -91,7 +91,7 @@ export function WorkspaceView({ workspace, terminals, focusedTerminalId }: Works
     workspaceStore.setFocusedTerminal(id)
   }, [])
 
-  // Determine what to show in main panel and thumbnail bar
+  // Determine what to show in thumbnail bar
   const mainTerminal = focusedTerminal || claudeCode
   const thumbnailTerminals = isClaudeCodeFocused
     ? regularTerminals
@@ -99,13 +99,43 @@ export function WorkspaceView({ workspace, terminals, focusedTerminalId }: Works
 
   return (
     <div className="workspace-view">
-      {mainTerminal && (
-        <MainPanel
-          terminal={mainTerminal}
-          onClose={handleCloseTerminal}
-          onRestart={handleRestart}
-        />
-      )}
+      {/* Render ALL terminals, show/hide with CSS - keeps processes running */}
+      <div className="terminals-container">
+        {terminals.map(terminal => (
+          <div
+            key={terminal.id}
+            className={`terminal-wrapper ${terminal.id === mainTerminal?.id ? 'active' : 'hidden'}`}
+          >
+            <div className="main-panel">
+              <div className="main-panel-header">
+                <div className={`main-panel-title ${terminal.type === 'claude-code' ? 'claude-code' : ''}`}>
+                  {terminal.type === 'claude-code' && <span>✦</span>}
+                  <span>{terminal.title}</span>
+                </div>
+                <div className="main-panel-actions">
+                  <button
+                    className="action-btn"
+                    onClick={() => handleRestart(terminal.id)}
+                    title="Restart terminal"
+                  >
+                    ⟳
+                  </button>
+                  <button
+                    className="action-btn danger"
+                    onClick={() => handleCloseTerminal(terminal.id)}
+                    title="Close terminal"
+                  >
+                    ×
+                  </button>
+                </div>
+              </div>
+              <div className="main-panel-content">
+                <TerminalPanel terminalId={terminal.id} />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
 
       <ThumbnailBar
         terminals={thumbnailTerminals}

@@ -5,21 +5,23 @@
   "main": "dist-electron/main.js",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build && electron-builder",
-    "preview": "vite preview",
-    "electron:dev": "concurrently \"vite\" \"electron .\"",
-    "postinstall": "electron-rebuild"
+    "compile": "vite build",
+    "start": "electron .",
+    "build": "vite build && electron-builder",
+    "postinstall": "echo 'Run electron-rebuild manually if node-pty is needed'"
   },
   "dependencies": {
     "@xterm/addon-fit": "^0.10.0",
     "@xterm/xterm": "^5.5.0",
-    "node-pty": "0.10.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "uuid": "^9.0.0"
   },
+  "optionalDependencies": {
+    "node-pty": "^0.10.1"
+  },
   "devDependencies": {
-    "@electron/rebuild": "^3.6.0",
+    "@electron/rebuild": "^4.0.2",
     "@types/node": "^20.0.0",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
@@ -40,7 +42,9 @@
       "output": "release"
     },
     "win": {
-      "target": "nsis"
-    }
+      "target": "dir",
+      "signAndEditExecutable": false
+    },
+    "forceCodeSigning": false
   }
 }

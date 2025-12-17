@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git init:*)",
+      "Bash(npx electron-rebuild)",
+      "Bash(npm install:*)",
+      "Bash(npx node-gyp:*)",
+      "Bash(dir \"C:\\workspaces\\tools\\better-terminal\\node_modules\\node-pty\\deps\\winpty\\src\\shared\")",
+      "Bash(powershell:*)",
+      "Bash(npm run build:*)",
+      "Bash(npx --yes @electron/rebuild:*)"
+    ]
+  }
+}

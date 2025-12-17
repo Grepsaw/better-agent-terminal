@@ -92,10 +92,13 @@ class WorkspaceStore {
       scrollbackBuffer: []
     }
 
+    // Only auto-focus Claude Code, keep current focus for regular terminals
+    const shouldFocus = type === 'claude-code' || !this.state.focusedTerminalId
+
     this.state = {
       ...this.state,
       terminals: [...this.state.terminals, terminal],
-      focusedTerminalId: terminal.id
+      focusedTerminalId: shouldFocus ? terminal.id : this.state.focusedTerminalId
     }
 
     this.notify()
