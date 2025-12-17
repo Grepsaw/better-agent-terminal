@@ -390,6 +390,19 @@ body {
   box-sizing: border-box;
 }
 
+/* Fix IME candidate box position - force it to bottom left */
+.terminal-panel .xterm-helper-textarea {
+  position: fixed !important;
+  bottom: 60px !important;
+  left: 220px !important;
+  top: auto !important;
+  opacity: 1 !important;
+  width: 1px !important;
+  height: 20px !important;
+  font-size: 14px !important;
+  z-index: 10 !important;
+}
+
 
 /* Close Confirm Dialog */
 .dialog-overlay {

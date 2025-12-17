@@ -173,6 +173,32 @@ export function TerminalPanel({ terminalId, isActive = true }: TerminalPanelProp
       fitAddon.fit()
     })
 
+    // Fix IME textarea position - force it to bottom left
+    const fixImePosition = () => {
+      const textarea = containerRef.current?.querySelector('.xterm-helper-textarea') as HTMLTextAreaElement
+      if (textarea) {
+        textarea.style.position = 'fixed'
+        textarea.style.bottom = '80px'
+        textarea.style.left = '220px'
+        textarea.style.top = 'auto'
+        textarea.style.width = '1px'
+        textarea.style.height = '20px'
+        textarea.style.opacity = '0'
+        textarea.style.zIndex = '10'
+      }
+    }
+
+    // Use MutationObserver to keep fixing position when xterm.js changes it
+    const observer = new MutationObserver(() => {
+      fixImePosition()
+    })
+
+    const textarea = containerRef.current?.querySelector('.xterm-helper-textarea')
+    if (textarea) {
+      observer.observe(textarea, { attributes: true, attributeFilter: ['style'] })
+      fixImePosition()
+    }
+
     terminalRef.current = terminal
     fitAddonRef.current = fitAddon
 
@@ -268,6 +294,7 @@ export function TerminalPanel({ terminalId, isActive = true }: TerminalPanelProp
       unsubscribeOutput()
       unsubscribeExit()
       resizeObserver.disconnect()
+      observer.disconnect()
       terminal.dispose()
     }
   }, [terminalId])
