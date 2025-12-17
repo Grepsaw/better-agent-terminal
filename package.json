@@ -52,8 +52,17 @@
       "signAndEditExecutable": false,
       "icon": "assets/icon.ico"
     },
+    "mac": {
+      "target": "dmg",
+      "icon": "assets/icon.png",
+      "category": "public.app-category.developer-tools"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "assets/icon.png"
+    },
     "forceCodeSigning": false,
-    "npmRebuild": false,
+    "npmRebuild": true,
     "files": [
       "dist/**/*",
       "dist-electron/**/*",

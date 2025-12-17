@@ -85,6 +85,18 @@ class WorkspaceStore {
     this.notify()
   }
 
+  setWorkspaceRole(id: string, role: string): void {
+    this.state = {
+      ...this.state,
+      workspaces: this.state.workspaces.map(w =>
+        w.id === id ? { ...w, role: role.trim() || undefined } : w
+      )
+    }
+
+    this.notify()
+    this.save()
+  }
+
   // Terminal actions
   addTerminal(workspaceId: string, type: 'terminal' | 'claude-code'): TerminalInstance {
     const workspace = this.state.workspaces.find(w => w.id === workspaceId)

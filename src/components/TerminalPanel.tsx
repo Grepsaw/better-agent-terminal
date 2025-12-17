@@ -124,39 +124,39 @@ export function TerminalPanel({ terminalId, isActive = true }: TerminalPanelProp
     if (!containerRef.current) return
 
     // Create terminal instance
+    // Novel theme (macOS Terminal.app inspired)
     const terminal = new Terminal({
       theme: {
-        background: '#1e1e1e',
-        foreground: '#cccccc',
-        cursor: '#ffffff',
-        cursorAccent: '#000000',
-        selectionBackground: '#264f78',
-        black: '#000000',
-        red: '#cd3131',
-        green: '#0dbc79',
-        yellow: '#e5e510',
-        blue: '#2472c8',
-        magenta: '#bc3fbc',
-        cyan: '#11a8cd',
-        white: '#e5e5e5',
-        brightBlack: '#666666',
-        brightRed: '#f14c4c',
-        brightGreen: '#23d18b',
-        brightYellow: '#f5f543',
-        brightBlue: '#3b8eea',
-        brightMagenta: '#d670d6',
-        brightCyan: '#29b8db',
-        brightWhite: '#e5e5e5'
+        background: '#1f1d1a',
+        foreground: '#dfdbc3',
+        cursor: '#dfdbc3',
+        cursorAccent: '#1f1d1a',
+        selectionBackground: '#5c5142',
+        black: '#3b3228',
+        red: '#cb6077',
+        green: '#beb55b',
+        yellow: '#f4bc87',
+        blue: '#8ab3b5',
+        magenta: '#a89bb9',
+        cyan: '#7bbda4',
+        white: '#d0c8c6',
+        brightBlack: '#554d46',
+        brightRed: '#cb6077',
+        brightGreen: '#beb55b',
+        brightYellow: '#f4bc87',
+        brightBlue: '#8ab3b5',
+        brightMagenta: '#a89bb9',
+        brightCyan: '#7bbda4',
+        brightWhite: '#f5f1e6'
       },
       fontSize: 14,
-      fontFamily: 'Consolas, Monaco, "Courier New", monospace',
+      fontFamily: '"SF Mono", Menlo, Monaco, "Courier New", monospace',
       cursorBlink: true,
       scrollback: 10000,
       convertEol: true,
       allowProposedApi: true,
       allowTransparency: true,
-      scrollOnOutput: true,
-      windowsMode: true
+      scrollOnOutput: true
     })
 
     const fitAddon = new FitAddon()

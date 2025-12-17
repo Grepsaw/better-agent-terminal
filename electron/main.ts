@@ -126,6 +126,20 @@ ipcMain.handle('settings:load', async () => {
 ipcMain.handle('settings:get-shell-path', async (_event, shellType: string) => {
   const fs = await import('fs')
 
+  // macOS and Linux support
+  if (process.platform === 'darwin' || process.platform === 'linux') {
+    if (shellType === 'auto') {
+      return process.env.SHELL || '/bin/zsh'
+    }
+    // For non-auto, return the shellType as-is (custom path) or default shell
+    if (shellType === 'pwsh' || shellType === 'powershell' || shellType === 'cmd') {
+      // Windows shells requested on Unix - fall back to default
+      return process.env.SHELL || '/bin/zsh'
+    }
+    return shellType // custom path
+  }
+
+  // Windows support
   if (shellType === 'auto' || shellType === 'pwsh') {
     const pwshPaths = [
       'C:\\Program Files\\PowerShell\\7\\pwsh.exe',

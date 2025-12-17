@@ -59,6 +59,9 @@ export default function App() {
           workspaceStore.renameWorkspace(id, alias)
           workspaceStore.save()
         }}
+        onSetWorkspaceRole={(id, role) => {
+          workspaceStore.setWorkspaceRole(id, role)
+        }}
         onOpenSettings={() => setShowSettings(true)}
         onOpenAbout={() => setShowAbout(true)}
       />

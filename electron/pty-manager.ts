@@ -94,11 +94,15 @@ export class PtyManager {
         })
 
         ptyProcess.onData((data: string) => {
-          this.window.webContents.send('pty:output', id, data)
+          if (!this.window.isDestroyed()) {
+            this.window.webContents.send('pty:output', id, data)
+          }
         })
 
         ptyProcess.onExit(({ exitCode }: { exitCode: number }) => {
-          this.window.webContents.send('pty:exit', id, exitCode)
+          if (!this.window.isDestroyed()) {
+            this.window.webContents.send('pty:exit', id, exitCode)
+          }
           this.instances.delete(id)
         })
 
@@ -141,25 +145,35 @@ export class PtyManager {
         })
 
         childProcess.stdout?.on('data', (data: Buffer) => {
-          this.window.webContents.send('pty:output', id, data.toString())
+          if (!this.window.isDestroyed()) {
+            this.window.webContents.send('pty:output', id, data.toString())
+          }
         })
 
         childProcess.stderr?.on('data', (data: Buffer) => {
-          this.window.webContents.send('pty:output', id, data.toString())
+          if (!this.window.isDestroyed()) {
+            this.window.webContents.send('pty:output', id, data.toString())
+          }
         })
 
         childProcess.on('exit', (exitCode: number | null) => {
-          this.window.webContents.send('pty:exit', id, exitCode ?? 0)
+          if (!this.window.isDestroyed()) {
+            this.window.webContents.send('pty:exit', id, exitCode ?? 0)
+          }
           this.instances.delete(id)
         })
 
         childProcess.on('error', (error) => {
           console.error('Child process error:', error)
-          this.window.webContents.send('pty:output', id, `\r\n[Error: ${error.message}]\r\n`)
+          if (!this.window.isDestroyed()) {
+            this.window.webContents.send('pty:output', id, `\r\n[Error: ${error.message}]\r\n`)
+          }
         })
 
         // Send initial message
-        this.window.webContents.send('pty:output', id, `[Terminal - child_process mode]\r\n`)
+        if (!this.window.isDestroyed()) {
+          this.window.webContents.send('pty:output', id, `[Terminal - child_process mode]\r\n`)
+        }
 
         this.instances.set(id, { process: childProcess, type, cwd, usePty: false })
         console.log('Created terminal using child_process fallback')
