@@ -185,6 +185,10 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 Built with assistance from Claude Code 🤖
 
+## 🤝 Contributors
+
+- **lmanchu** - [@lmanchu](https://github.com/lmanchu) - macOS/Linux support, workspace roles
+
 ---
 
 <div align="center">
