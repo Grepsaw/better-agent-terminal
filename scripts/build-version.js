@@ -62,8 +62,10 @@ function updatePackageVersion(version) {
 
 // Run build
 function runBuild() {
-  console.log('Running build...\n');
-  execSync('npm run build', {
+  // In CI, only compile (electron-builder runs separately)
+  const command = process.env.CI ? 'npm run compile' : 'npm run build';
+  console.log(`Running ${command}...\n`);
+  execSync(command, {
     stdio: 'inherit',
     cwd: path.join(__dirname, '..')
   });
