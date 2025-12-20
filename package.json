@@ -10,7 +10,8 @@
     "build": "vite build && electron-builder",
     "build:release": "node scripts/build-version.js",
     "postinstall": "echo 'Run electron-rebuild manually if node-pty is needed'",
-    "test:console": "node tests/console-test.js"
+    "test:console": "node tests/console-test.js",
+    "test:claude-ctrl-o": "node tests/test-claude-ctrl-o.js"
   },
   "dependencies": {
     "@xterm/addon-fit": "^0.10.0",
