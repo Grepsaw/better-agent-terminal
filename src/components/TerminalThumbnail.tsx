@@ -42,7 +42,7 @@ const setupGlobalListener = () => {
   window.electronAPI.pty.onOutput((id, data) => {
     const prev = previewCache.get(id) || ''
     const combined = prev + data
-    // Keep last 8 lines, clean all ANSI escape sequences for readability
+    // Keep last 8 lines, clean ANSI escape sequences for readability
     const cleaned = stripAnsi(combined)
     const lines = cleaned.split('\n').slice(-8)
     previewCache.set(id, lines.join('\n'))
@@ -58,10 +58,14 @@ interface TerminalThumbnailProps {
 export function TerminalThumbnail({ terminal, isActive, onClick }: TerminalThumbnailProps) {
   const [preview, setPreview] = useState<string>(previewCache.get(terminal.id) || '')
   const [fontFamily, setFontFamily] = useState<string>(settingsStore.getFontFamilyString())
+<<<<<<< HEAD
 
   // Check if this is an agent terminal
   const isAgent = terminal.agentPreset && terminal.agentPreset !== 'none'
   const agentConfig = isAgent ? getAgentPreset(terminal.agentPreset!) : null
+=======
+  const isCodeAgent = terminal.type === 'code-agent'
+>>>>>>> origin/main
 
   useEffect(() => {
     setupGlobalListener()
@@ -85,13 +89,22 @@ export function TerminalThumbnail({ terminal, isActive, onClick }: TerminalThumb
 
   return (
     <div
+<<<<<<< HEAD
       className={`thumbnail ${isActive ? 'active' : ''} ${isAgent ? 'agent-terminal' : ''}`}
+=======
+      className={`thumbnail ${isActive ? 'active' : ''} ${isCodeAgent ? 'code-agent' : ''}`}
+>>>>>>> origin/main
       onClick={onClick}
       style={agentConfig ? { '--agent-color': agentConfig.color } as React.CSSProperties : undefined}
     >
       <div className="thumbnail-header">
+<<<<<<< HEAD
         <div className={`thumbnail-title ${isAgent ? 'agent-terminal' : ''}`}>
           {isAgent && <span>{agentConfig?.icon}</span>}
+=======
+        <div className={`thumbnail-title ${isCodeAgent ? 'code-agent' : ''}`}>
+          {isCodeAgent && <span>✦</span>}
+>>>>>>> origin/main
           <span>{terminal.title}</span>
         </div>
         <ActivityIndicator terminalId={terminal.id} size="small" />

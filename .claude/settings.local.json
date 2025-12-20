@@ -15,7 +15,10 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(git tag:*)",
-      "Bash(GIT_SSH_COMMAND=\"ssh -i ~/.ssh/id_ed25519_tonyq -o IdentitiesOnly=yes\" git push --force origin v1.0.0)"
+      "Bash(GIT_SSH_COMMAND=\"ssh -i ~/.ssh/id_ed25519_tonyq -o IdentitiesOnly=yes\" git push --force origin v1.0.0)",
+      "Bash(git config:*)",
+      "Bash(npm run build:release:*)",
+      "Bash(cat:*)"
     ]
   }
 }

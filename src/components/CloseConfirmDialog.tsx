@@ -7,9 +7,9 @@ export function CloseConfirmDialog({ onConfirm, onCancel }: CloseConfirmDialogPr
   return (
     <div className="dialog-overlay" onClick={onCancel}>
       <div className="dialog" onClick={e => e.stopPropagation()}>
-        <h3>Close Claude Code?</h3>
+        <h3>Close Code Agent?</h3>
         <p>
-          Are you sure you want to close the Claude Code terminal?
+          Are you sure you want to close the Code Agent terminal?
           Any running process will be terminated.
         </p>
         <div className="dialog-actions">

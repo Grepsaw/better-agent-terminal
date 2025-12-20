@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 import type { AppSettings, ShellType, FontType, ColorPresetId, EnvVariable } from '../types'
 import { FONT_OPTIONS, COLOR_PRESETS } from '../types'
+=======
+import type { AppSettings, ShellType, FontType, ColorPresetId, AgentCommandType } from '../types'
+import { FONT_OPTIONS, COLOR_PRESETS, AGENT_COMMAND_OPTIONS } from '../types'
+>>>>>>> origin/main
 
 type Listener = () => void
 
@@ -14,7 +19,13 @@ const defaultSettings: AppSettings = {
   customBackgroundColor: '#1f1d1a',
   customForegroundColor: '#dfdbc3',
   customCursorColor: '#dfdbc3',
+<<<<<<< HEAD
   globalEnvVars: []
+=======
+  agentAutoCommand: false,
+  agentCommandType: 'claude',
+  agentCustomCommand: ''
+>>>>>>> origin/main
 }
 
 class SettingsStore {
@@ -94,26 +105,42 @@ class SettingsStore {
     this.save()
   }
 
+<<<<<<< HEAD
   setGlobalEnvVars(envVars: EnvVariable[]): void {
     this.settings = { ...this.settings, globalEnvVars: envVars }
+=======
+  setAgentAutoCommand(agentAutoCommand: boolean): void {
+    this.settings = { ...this.settings, agentAutoCommand }
+>>>>>>> origin/main
     this.notify()
     this.save()
   }
 
+<<<<<<< HEAD
   addGlobalEnvVar(envVar: EnvVariable): void {
     const current = this.settings.globalEnvVars || []
     this.settings = { ...this.settings, globalEnvVars: [...current, envVar] }
+=======
+  setAgentCommandType(agentCommandType: AgentCommandType): void {
+    this.settings = { ...this.settings, agentCommandType }
+>>>>>>> origin/main
     this.notify()
     this.save()
   }
 
+<<<<<<< HEAD
   removeGlobalEnvVar(key: string): void {
     const current = this.settings.globalEnvVars || []
     this.settings = { ...this.settings, globalEnvVars: current.filter(e => e.key !== key) }
+=======
+  setAgentCustomCommand(agentCustomCommand: string): void {
+    this.settings = { ...this.settings, agentCustomCommand }
+>>>>>>> origin/main
     this.notify()
     this.save()
   }
 
+<<<<<<< HEAD
   updateGlobalEnvVar(key: string, updates: Partial<EnvVariable>): void {
     const current = this.settings.globalEnvVars || []
     this.settings = {
@@ -122,6 +149,16 @@ class SettingsStore {
     }
     this.notify()
     this.save()
+=======
+  // Get the agent command to execute
+  getAgentCommand(): string | null {
+    if (!this.settings.agentAutoCommand) return null
+    if (this.settings.agentCommandType === 'custom') {
+      return this.settings.agentCustomCommand || null
+    }
+    const option = AGENT_COMMAND_OPTIONS.find(o => o.id === this.settings.agentCommandType)
+    return option?.command || null
+>>>>>>> origin/main
   }
 
   // Get terminal colors based on preset or custom settings

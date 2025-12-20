@@ -10,6 +10,7 @@ import '@xterm/xterm/css/xterm.css'
 interface TerminalPanelProps {
   terminalId: string
   isActive?: boolean
+  terminalType?: 'terminal' | 'code-agent'
 }
 
 interface ContextMenu {
@@ -18,11 +19,19 @@ interface ContextMenu {
   hasSelection: boolean
 }
 
-export function TerminalPanel({ terminalId, isActive = true }: TerminalPanelProps) {
+export function TerminalPanel({ terminalId, isActive = true, terminalType }: TerminalPanelProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const terminalRef = useRef<Terminal | null>(null)
   const fitAddonRef = useRef<FitAddon | null>(null)
   const [contextMenu, setContextMenu] = useState<ContextMenu | null>(null)
+  const [terminalReady, setTerminalReady] = useState(false)
+  const hasBeenFocusedRef = useRef(false)
+  const isActiveRef = useRef(isActive)
+
+  // Keep isActiveRef in sync with isActive prop
+  useEffect(() => {
+    isActiveRef.current = isActive
+  }, [isActive])
 
   // Handle paste with text size checking
   const handlePasteText = (text: string) => {
@@ -79,7 +88,7 @@ export function TerminalPanel({ terminalId, isActive = true }: TerminalPanelProp
 
   // Handle terminal resize and focus when becoming active
   useEffect(() => {
-    if (isActive && fitAddonRef.current && terminalRef.current) {
+    if (isActive && terminalReady && fitAddonRef.current && terminalRef.current) {
       const terminal = terminalRef.current
       const fitAddon = fitAddonRef.current
 
@@ -96,12 +105,33 @@ export function TerminalPanel({ terminalId, isActive = true }: TerminalPanelProp
         requestAnimationFrame(() => {
           terminal.refresh(0, terminal.rows - 1)
           terminal.focus()
+
+          // Execute agent command on first focus for code-agent terminals
+          // Use delay to avoid auto-running all agents when app starts
+          if (!hasBeenFocusedRef.current && terminalType === 'code-agent') {
+            hasBeenFocusedRef.current = true
+            const terminalInstance = workspaceStore.getState().terminals.find(t => t.id === terminalId)
+            if (terminalInstance && !terminalInstance.agentCommandSent && !terminalInstance.hasUserInput) {
+              const agentCommand = settingsStore.getAgentCommand()
+              if (agentCommand) {
+                // Wait 3 seconds and verify terminal is still active before sending
+                setTimeout(() => {
+                  const currentTerminal = workspaceStore.getState().terminals.find(t => t.id === terminalId)
+                  // Only send if terminal is still active (visible) and no user input yet
+                  if (isActiveRef.current && currentTerminal && !currentTerminal.hasUserInput && !currentTerminal.agentCommandSent) {
+                    window.electronAPI.pty.write(terminalId, agentCommand + '\r')
+                    workspaceStore.markAgentCommandSent(terminalId)
+                  }
+                }, 3000)
+              }
+            }
+          }
         })
       })
 
       return () => cancelAnimationFrame(rafId)
     }
-  }, [isActive, terminalId])
+  }, [isActive, terminalReady, terminalId, terminalType])
 
   // Add intersection observer to detect when terminal becomes visible
   useEffect(() => {
@@ -218,10 +248,15 @@ export function TerminalPanel({ terminalId, isActive = true }: TerminalPanelProp
 
     terminalRef.current = terminal
     fitAddonRef.current = fitAddon
+    setTerminalReady(true)
 
     // Handle terminal input
     terminal.onData((data) => {
       window.electronAPI.pty.write(terminalId, data)
+      // Mark terminal as having user input (for agent command tracking)
+      if (terminalType === 'code-agent') {
+        workspaceStore.markHasUserInput(terminalId)
+      }
     })
 
     // Handle copy and paste shortcuts

@@ -22,7 +22,7 @@ export function AboutPanel({ onClose }: AboutPanelProps) {
           </div>
 
           <p className="about-description">
-            A Windows terminal aggregator with multi-workspace support and Claude Code integration.
+            A cross-platform terminal aggregator with multi-workspace support and AI code agent integration.
           </p>
 
           <div className="about-info">

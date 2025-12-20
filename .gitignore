@@ -8,3 +8,6 @@ release/
 # Local environment (not committed)
 .envrc
 .env.local
+
+# Diagnosis reports
+tests/*.json
