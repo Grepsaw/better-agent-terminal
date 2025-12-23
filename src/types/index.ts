@@ -165,4 +165,6 @@ export interface AppSettings {
   agentAutoCommand: boolean;      // 是否自動啟動 Agent
   agentCommandType: AgentCommandType;  // Agent 命令類型
   agentCustomCommand: string;     // 自定義 Agent 命令
+  defaultTerminalCount: number;   // 每個 workspace 預設的 terminal 數量
+  createDefaultAgentTerminal: boolean;  // 是否預設建立 Agent Terminal
 }

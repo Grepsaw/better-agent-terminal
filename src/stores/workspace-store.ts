@@ -98,6 +98,21 @@ class WorkspaceStore {
     this.save()
   }
 
+  reorderWorkspaces(workspaceIds: string[]): void {
+    const workspaceMap = new Map(this.state.workspaces.map(w => [w.id, w]))
+    const reordered = workspaceIds
+      .map(id => workspaceMap.get(id))
+      .filter((w): w is Workspace => w !== undefined)
+
+    this.state = {
+      ...this.state,
+      workspaces: reordered
+    }
+
+    this.notify()
+    this.save()
+  }
+
   // Workspace environment variables
   setWorkspaceEnvVars(id: string, envVars: import('../types').EnvVariable[]): void {
     this.state = {

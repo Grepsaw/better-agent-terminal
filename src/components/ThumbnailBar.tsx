@@ -23,10 +23,12 @@ export function ThumbnailBar({
   collapsed = false,
   onCollapse
 }: ThumbnailBarProps) {
-  // Check if first terminal is an agent
+  // Check if these are agent terminals or regular terminals
   const firstTerminal = terminals[0]
-  const isAgent = firstTerminal?.agentPreset && firstTerminal.agentPreset !== 'none'
-  const label = isAgent ? (getAgentPreset(firstTerminal.agentPreset!)?.name || 'Agent') : 'Terminals'
+  const isAgentList = firstTerminal?.agentPreset && firstTerminal.agentPreset !== 'none'
+  const label = isAgentList
+    ? (getAgentPreset(firstTerminal.agentPreset!)?.name || 'Agent')
+    : 'Terminals'
 
   // Collapsed state - show icon bar
   if (collapsed) {
@@ -48,11 +50,18 @@ export function ThumbnailBar({
     <div className="thumbnail-bar" style={style}>
       <div className="thumbnail-bar-header">
         <span>{label}</span>
-        {onCollapse && (
-          <button className="thumbnail-collapse-btn" onClick={onCollapse} title="Collapse Panel">
-            ▼
-          </button>
-        )}
+        <div className="thumbnail-bar-actions">
+          {onAddTerminal && (
+            <button className="thumbnail-add-btn" onClick={onAddTerminal} title="Add Terminal">
+              +
+            </button>
+          )}
+          {onCollapse && (
+            <button className="thumbnail-collapse-btn" onClick={onCollapse} title="Collapse Panel">
+              ▼
+            </button>
+          )}
+        </div>
       </div>
       <div className="thumbnail-list">
         {terminals.map(terminal => (
@@ -63,11 +72,6 @@ export function ThumbnailBar({
             onClick={() => onFocus(terminal.id)}
           />
         ))}
-        {showAddButton && onAddTerminal && (
-          <button className="add-terminal-btn" onClick={onAddTerminal}>
-            +
-          </button>
-        )}
       </div>
     </div>
   )

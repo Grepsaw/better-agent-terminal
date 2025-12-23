@@ -4,6 +4,11 @@ import { PtyManager } from './pty-manager'
 import { checkForUpdates, UpdateCheckResult } from './update-checker'
 import { snippetDb, CreateSnippetInput } from './snippet-db'
 
+// Set AppUserModelId for Windows taskbar pinning (must be before app.whenReady)
+if (process.platform === 'win32') {
+  app.setAppUserModelId('org.tonyq.better-agent-terminal')
+}
+
 let mainWindow: BrowserWindow | null = null
 let ptyManager: PtyManager | null = null
 let updateCheckResult: UpdateCheckResult | null = null

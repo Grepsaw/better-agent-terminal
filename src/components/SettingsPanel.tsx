@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
-import type { AppSettings, ShellType, FontType, ColorPresetId, EnvVariable } from '../types'
+import type { AppSettings, ShellType, FontType, ColorPresetId } from '../types'
 import { FONT_OPTIONS, COLOR_PRESETS } from '../types'
 import { settingsStore } from '../stores/settings-store'
 import { EnvVarEditor } from './EnvVarEditor'
+import { AGENT_PRESETS, AgentPresetId } from '../types/agent-presets'
 
 interface SettingsPanelProps {
   onClose: () => void
@@ -121,6 +122,59 @@ export function SettingsPanel({ onClose }: SettingsPanelProps) {
                   placeholder="C:\path\to\shell.exe"
                 />
               </div>
+            )}
+
+            <div className="settings-group">
+              <label>Default Terminals per Workspace: {settings.defaultTerminalCount || 1}</label>
+              <input
+                type="range"
+                min="1"
+                max="5"
+                value={settings.defaultTerminalCount || 1}
+                onChange={e => settingsStore.setDefaultTerminalCount(Number(e.target.value))}
+              />
+            </div>
+
+            <div className="settings-group checkbox-group">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={settings.createDefaultAgentTerminal === true}
+                  onChange={e => settingsStore.setCreateDefaultAgentTerminal(e.target.checked)}
+                />
+                Create Agent Terminal by default
+              </label>
+              <p className="settings-hint">When enabled, new workspaces will include an Agent Terminal.</p>
+            </div>
+
+            {settings.createDefaultAgentTerminal && (
+              <>
+                <div className="settings-group">
+                  <label>Default Agent</label>
+                  <select
+                    value={settings.defaultAgent || 'claude-code'}
+                    onChange={e => settingsStore.setDefaultAgent(e.target.value as AgentPresetId)}
+                  >
+                    {AGENT_PRESETS.filter(p => p.id !== 'none').map(preset => (
+                      <option key={preset.id} value={preset.id}>
+                        {preset.icon} {preset.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="settings-group checkbox-group">
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={settings.agentAutoCommand === true}
+                      onChange={e => settingsStore.setAgentAutoCommand(e.target.checked)}
+                    />
+                    Auto-run agent command
+                  </label>
+                  <p className="settings-hint">Automatically execute the agent command (e.g., `claude`) when creating an Agent Terminal.</p>
+                </div>
+              </>
             )}
           </div>
 

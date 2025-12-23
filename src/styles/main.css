@@ -87,11 +87,11 @@ body {
 
 /* Sidebar */
 .sidebar {
-  width: 200px;
   background: var(--bg-secondary);
   border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
 }
 
 .sidebar-header {
@@ -320,6 +320,41 @@ body {
 .workspace-item .remove-btn:hover {
   opacity: 1;
   background: rgba(255, 255, 255, 0.1);
+}
+
+/* Drag handle */
+.drag-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 100%;
+  margin-right: 8px;
+  opacity: 0.4;
+  cursor: grab;
+  flex-shrink: 0;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+.workspace-item:hover .drag-handle {
+  opacity: 0.7;
+}
+
+.workspace-item.dragging {
+  opacity: 0.5;
+}
+
+.workspace-item.drag-over-before {
+  border-top: 2px solid var(--accent-color);
+  margin-top: -2px;
+}
+
+.workspace-item.drag-over-after {
+  border-bottom: 2px solid var(--accent-color);
+  margin-bottom: -2px;
 }
 
 .sidebar-footer {
@@ -836,6 +871,27 @@ body {
   accent-color: var(--accent-color);
 }
 
+.settings-group.checkbox-group label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.settings-group.checkbox-group input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent-color);
+  cursor: pointer;
+}
+
+.settings-hint {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin: 4px 0 0 24px;
+  line-height: 1.4;
+}
+
 .font-preview-box {
   background: var(--bg-primary);
   border: 1px solid var(--border-color);
@@ -995,6 +1051,47 @@ body {
 
 .context-menu-item:hover {
   background: var(--bg-hover);
+}
+
+/* Workspace Context Menu */
+.workspace-context-menu {
+  position: fixed;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  padding: 4px 0;
+  min-width: 180px;
+  z-index: 1000;
+}
+
+.workspace-context-menu .context-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  cursor: pointer;
+  color: var(--text-primary);
+  font-size: 13px;
+  transition: background 0.15s;
+}
+
+.workspace-context-menu .context-menu-item:hover {
+  background: var(--bg-hover);
+}
+
+.workspace-context-menu .context-menu-item.danger {
+  color: var(--danger-color);
+}
+
+.workspace-context-menu .context-menu-item.danger:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.context-menu-divider {
+  height: 1px;
+  background: var(--border-color);
+  margin: 4px 0;
 }
 
 /* Activity Indicator */
@@ -1864,6 +1961,30 @@ body {
 }
 
 /* Thumbnail Bar Collapse Button */
+.thumbnail-bar-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.thumbnail-add-btn {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 2px 8px;
+  border-radius: 4px;
+  transition: all 0.15s;
+  line-height: 1;
+}
+
+.thumbnail-add-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: var(--accent-color);
+}
+
 .thumbnail-collapse-btn {
   background: transparent;
   border: none;

@@ -12,6 +12,9 @@ import type { AppState, EnvVariable } from './types'
 
 // Panel settings interface
 interface PanelSettings {
+  sidebar: {
+    width: number
+  }
   snippetSidebar: {
     width: number
     collapsed: boolean
@@ -19,6 +22,9 @@ interface PanelSettings {
 }
 
 const PANEL_SETTINGS_KEY = 'better-terminal-panel-settings'
+const DEFAULT_SIDEBAR_WIDTH = 220
+const MIN_SIDEBAR_WIDTH = 160
+const MAX_SIDEBAR_WIDTH = 400
 const DEFAULT_SNIPPET_WIDTH = 280
 const MIN_SNIPPET_WIDTH = 180
 const MAX_SNIPPET_WIDTH = 500
@@ -27,12 +33,18 @@ function loadPanelSettings(): PanelSettings {
   try {
     const saved = localStorage.getItem(PANEL_SETTINGS_KEY)
     if (saved) {
-      return JSON.parse(saved)
+      const parsed = JSON.parse(saved)
+      // Ensure sidebar settings exist (migration from old format)
+      return {
+        sidebar: parsed.sidebar || { width: DEFAULT_SIDEBAR_WIDTH },
+        snippetSidebar: parsed.snippetSidebar || { width: DEFAULT_SNIPPET_WIDTH, collapsed: false }
+      }
     }
   } catch (e) {
     console.error('Failed to load panel settings:', e)
   }
   return {
+    sidebar: { width: DEFAULT_SIDEBAR_WIDTH },
     snippetSidebar: { width: DEFAULT_SNIPPET_WIDTH, collapsed: false }
   }
 }
@@ -54,6 +66,26 @@ export default function App() {
   const [showSnippetSidebar] = useState(true)
   // Panel settings for resizable panels
   const [panelSettings, setPanelSettings] = useState<PanelSettings>(loadPanelSettings)
+
+  // Handle sidebar resize
+  const handleSidebarResize = useCallback((delta: number) => {
+    setPanelSettings(prev => {
+      // Note: delta is positive when dragging right (making sidebar wider)
+      const newWidth = Math.min(MAX_SIDEBAR_WIDTH, Math.max(MIN_SIDEBAR_WIDTH, prev.sidebar.width + delta))
+      const updated = { ...prev, sidebar: { ...prev.sidebar, width: newWidth } }
+      savePanelSettings(updated)
+      return updated
+    })
+  }, [])
+
+  // Reset sidebar to default width
+  const handleSidebarResetWidth = useCallback(() => {
+    setPanelSettings(prev => {
+      const updated = { ...prev, sidebar: { ...prev.sidebar, width: DEFAULT_SIDEBAR_WIDTH } }
+      savePanelSettings(updated)
+      return updated
+    })
+  }, [])
 
   // Handle snippet sidebar resize
   const handleSnippetResize = useCallback((delta: number) => {
@@ -142,6 +174,7 @@ export default function App() {
   return (
     <div className="app">
       <Sidebar
+        width={panelSettings.sidebar.width}
         workspaces={state.workspaces}
         activeWorkspaceId={state.activeWorkspaceId}
         onSelectWorkspace={(id) => workspaceStore.setActiveWorkspace(id)}
@@ -157,9 +190,17 @@ export default function App() {
         onSetWorkspaceRole={(id, role) => {
           workspaceStore.setWorkspaceRole(id, role)
         }}
+        onReorderWorkspaces={(workspaceIds) => {
+          workspaceStore.reorderWorkspaces(workspaceIds)
+        }}
         onOpenEnvVars={(workspaceId) => setEnvDialogWorkspaceId(workspaceId)}
         onOpenSettings={() => setShowSettings(true)}
         onOpenAbout={() => setShowAbout(true)}
+      />
+      <ResizeHandle
+        direction="horizontal"
+        onResize={handleSidebarResize}
+        onDoubleClick={handleSidebarResetWidth}
       />
       <main className="main-content">
         {state.workspaces.length > 0 ? (

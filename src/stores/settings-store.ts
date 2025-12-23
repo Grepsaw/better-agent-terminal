@@ -1,4 +1,5 @@
 import type { AppSettings, ShellType, FontType, ColorPresetId, EnvVariable, AgentCommandType } from '../types'
+import type { AgentPresetId } from '../types/agent-presets'
 import { FONT_OPTIONS, COLOR_PRESETS, AGENT_COMMAND_OPTIONS } from '../types'
 
 type Listener = () => void
@@ -15,9 +16,12 @@ const defaultSettings: AppSettings = {
   customForegroundColor: '#dfdbc3',
   customCursorColor: '#dfdbc3',
   globalEnvVars: [],
-  agentAutoCommand: false,
+  defaultAgent: 'claude-code' as AgentPresetId,
+  agentAutoCommand: true,
   agentCommandType: 'claude',
-  agentCustomCommand: ''
+  agentCustomCommand: '',
+  defaultTerminalCount: 1,
+  createDefaultAgentTerminal: false
 }
 
 class SettingsStore {
@@ -143,6 +147,24 @@ class SettingsStore {
 
   setAgentCustomCommand(agentCustomCommand: string): void {
     this.settings = { ...this.settings, agentCustomCommand }
+    this.notify()
+    this.save()
+  }
+
+  setDefaultTerminalCount(count: number): void {
+    this.settings = { ...this.settings, defaultTerminalCount: Math.max(1, Math.min(5, count)) }
+    this.notify()
+    this.save()
+  }
+
+  setCreateDefaultAgentTerminal(create: boolean): void {
+    this.settings = { ...this.settings, createDefaultAgentTerminal: create }
+    this.notify()
+    this.save()
+  }
+
+  setDefaultAgent(agent: AgentPresetId): void {
+    this.settings = { ...this.settings, defaultAgent: agent }
     this.notify()
     this.save()
   }

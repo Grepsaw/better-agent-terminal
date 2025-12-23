@@ -6,7 +6,7 @@ import { ThumbnailBar } from './ThumbnailBar'
 import { CloseConfirmDialog } from './CloseConfirmDialog'
 import { MainPanel } from './MainPanel'
 import { ResizeHandle } from './ResizeHandle'
-import { AgentPresetId } from '../types/agent-presets'
+import { AgentPresetId, getAgentPreset } from '../types/agent-presets'
 
 // ThumbnailBar panel settings
 const THUMBNAIL_SETTINGS_KEY = 'better-terminal-thumbnail-settings'
@@ -73,6 +73,9 @@ function mergeEnvVars(global: EnvVariable[] = [], workspace: EnvVariable[] = [])
   return result
 }
 
+// Track which workspaces have been initialized (outside component to persist across renders)
+const initializedWorkspaces = new Set<string>()
+
 export function WorkspaceView({ workspace, terminals, focusedTerminalId, isActive }: Readonly<WorkspaceViewProps>) {
   const [showCloseConfirm, setShowCloseConfirm] = useState<string | null>(null)
   const [thumbnailSettings, setThumbnailSettings] = useState<ThumbnailSettings>(loadThumbnailSettings)
@@ -108,29 +111,64 @@ export function WorkspaceView({ workspace, terminals, focusedTerminalId, isActiv
 
   // Categorize terminals
   const agentTerminal = terminals.find(t => t.agentPreset && t.agentPreset !== 'none')
+  const regularTerminals = terminals.filter(t => !t.agentPreset || t.agentPreset === 'none')
   const focusedTerminal = terminals.find(t => t.id === focusedTerminalId)
+  const isAgentFocused = focusedTerminal?.agentPreset && focusedTerminal.agentPreset !== 'none'
 
-  // Initialize first terminal when workspace loads (if no terminals exist)
+  // Initialize terminals when workspace becomes active (if no terminals exist)
   useEffect(() => {
-    if (terminals.length === 0) {
-      const createInitialTerminal = async () => {
-        const defaultAgent = workspace.defaultAgent || settingsStore.getSettings().defaultAgent || 'none'
-        const terminal = workspaceStore.addTerminal(workspace.id, defaultAgent as AgentPresetId)
-        const shell = await getShellFromSettings()
+    if (isActive && terminals.length === 0 && !initializedWorkspaces.has(workspace.id)) {
+      initializedWorkspaces.add(workspace.id)
+      const createInitialTerminals = async () => {
         const settings = settingsStore.getSettings()
+        const terminalCount = settings.defaultTerminalCount || 1
+        const createAgentTerminal = settings.createDefaultAgentTerminal === true
+        // Use 'claude' as default agent when createDefaultAgentTerminal is enabled
+        const defaultAgent = createAgentTerminal
+          ? (workspace.defaultAgent || settings.defaultAgent || 'claude')
+          : 'none'
+        const shell = await getShellFromSettings()
         const customEnv = mergeEnvVars(settings.globalEnvVars, workspace.envVars)
-        window.electronAPI.pty.create({
-          id: terminal.id,
-          cwd: workspace.folderPath,
-          type: 'terminal',
-          agentPreset: defaultAgent as AgentPresetId,
-          shell,
-          customEnv
-        })
+
+        // Create agent terminal first (if enabled)
+        if (createAgentTerminal) {
+          const agentTerminal = workspaceStore.addTerminal(workspace.id, defaultAgent as AgentPresetId)
+          window.electronAPI.pty.create({
+            id: agentTerminal.id,
+            cwd: workspace.folderPath,
+            type: 'terminal',
+            agentPreset: defaultAgent as AgentPresetId,
+            shell,
+            customEnv
+          })
+
+          // Auto-run agent command if enabled
+          if (settings.agentAutoCommand) {
+            const agentPreset = getAgentPreset(defaultAgent)
+            if (agentPreset?.command) {
+              // Small delay to ensure terminal is ready
+              setTimeout(() => {
+                window.electronAPI.pty.write(agentTerminal.id, agentPreset.command + '\r')
+              }, 500)
+            }
+          }
+        }
+
+        // Create regular terminals based on settings
+        for (let i = 0; i < terminalCount; i++) {
+          const terminal = workspaceStore.addTerminal(workspace.id)
+          window.electronAPI.pty.create({
+            id: terminal.id,
+            cwd: workspace.folderPath,
+            type: 'terminal',
+            shell,
+            customEnv
+          })
+        }
       }
-      createInitialTerminal()
+      createInitialTerminals()
     }
-  }, [workspace.id, terminals.length, workspace.defaultAgent, workspace.folderPath, workspace.envVars])
+  }, [isActive, workspace.id, terminals.length, workspace.defaultAgent, workspace.folderPath, workspace.envVars])
 
   // Set default focus - only for active workspace
   useEffect(() => {
@@ -196,6 +234,9 @@ export function WorkspaceView({ workspace, terminals, focusedTerminalId, isActiv
   // mainTerminal: the currently focused or first available terminal
   const mainTerminal = focusedTerminal || agentTerminal || terminals[0]
 
+  // Show all terminals in thumbnail bar (except the currently focused one)
+  const thumbnailTerminals = terminals.filter(t => t.id !== mainTerminal?.id)
+
   return (
     <div className="workspace-view">
       {/* Render ALL terminals, show/hide with CSS - keeps processes running */}
@@ -224,8 +265,8 @@ export function WorkspaceView({ workspace, terminals, focusedTerminalId, isActiv
       )}
 
       <ThumbnailBar
-        terminals={terminals}
-        focusedTerminalId={mainTerminal?.id || null}
+        terminals={thumbnailTerminals}
+        focusedTerminalId={focusedTerminalId}
         onFocus={handleFocus}
         onAddTerminal={handleAddTerminal}
         showAddButton={true}
