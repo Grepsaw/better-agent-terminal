@@ -374,9 +374,10 @@ body {
 
 /* Terminals Container - holds all terminals, show/hide via CSS */
 .terminals-container {
-  flex: 7;
+  flex: 1;
   position: relative;
   overflow: hidden;
+  min-height: 0;
 }
 
 .terminal-wrapper {
@@ -493,13 +494,14 @@ body {
   background: var(--bg-tertiary);
 }
 
-/* Thumbnail Bar (30%) */
+/* Thumbnail Bar */
 .thumbnail-bar {
-  flex: 3;
   display: flex;
   flex-direction: column;
   background: var(--bg-secondary);
   overflow: hidden;
+  flex-shrink: 0;
+  min-height: 80px;
 }
 
 .thumbnail-bar-header {
@@ -1759,4 +1761,121 @@ body {
   color: var(--text-secondary);
   margin: 0 0 16px 0;
   line-height: 1.5;
+}
+
+/* ============================================
+   Resizable Panel Components
+   ============================================ */
+
+/* Resize Handle */
+.resize-handle {
+  background: transparent;
+  transition: background 0.15s ease;
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+.resize-handle:hover {
+  background: var(--accent-color);
+}
+
+.resize-handle:active {
+  background: var(--accent-hover);
+}
+
+.resize-handle-horizontal {
+  width: 4px;
+  cursor: ew-resize;
+}
+
+.resize-handle-vertical {
+  height: 4px;
+  cursor: ns-resize;
+}
+
+/* Collapsed Bar */
+.collapsed-bar {
+  background: var(--bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  flex-shrink: 0;
+}
+
+.collapsed-bar:hover {
+  background: var(--bg-hover);
+}
+
+.collapsed-bar-right {
+  width: 40px;
+  height: 100%;
+  flex-direction: column;
+  gap: 8px;
+  border-left: 1px solid var(--border-color);
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
+.collapsed-bar-bottom {
+  height: 40px;
+  width: 100%;
+  flex-direction: row;
+  gap: 8px;
+  border-top: 1px solid var(--border-color);
+}
+
+.collapsed-bar-icon {
+  font-size: 16px;
+}
+
+.collapsed-bar-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+/* Snippet Header Actions */
+.snippet-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.snippet-collapse-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.snippet-collapse-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+/* Thumbnail Bar Collapse Button */
+.thumbnail-collapse-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 10px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.15s;
+}
+
+.thumbnail-collapse-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
 }

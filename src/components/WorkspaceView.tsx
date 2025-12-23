@@ -5,7 +5,39 @@ import { settingsStore } from '../stores/settings-store'
 import { ThumbnailBar } from './ThumbnailBar'
 import { CloseConfirmDialog } from './CloseConfirmDialog'
 import { MainPanel } from './MainPanel'
+import { ResizeHandle } from './ResizeHandle'
 import { AgentPresetId } from '../types/agent-presets'
+
+// ThumbnailBar panel settings
+const THUMBNAIL_SETTINGS_KEY = 'better-terminal-thumbnail-settings'
+const DEFAULT_THUMBNAIL_HEIGHT = 180
+const MIN_THUMBNAIL_HEIGHT = 80
+const MAX_THUMBNAIL_HEIGHT = 400
+
+interface ThumbnailSettings {
+  height: number
+  collapsed: boolean
+}
+
+function loadThumbnailSettings(): ThumbnailSettings {
+  try {
+    const saved = localStorage.getItem(THUMBNAIL_SETTINGS_KEY)
+    if (saved) {
+      return JSON.parse(saved)
+    }
+  } catch (e) {
+    console.error('Failed to load thumbnail settings:', e)
+  }
+  return { height: DEFAULT_THUMBNAIL_HEIGHT, collapsed: false }
+}
+
+function saveThumbnailSettings(settings: ThumbnailSettings): void {
+  try {
+    localStorage.setItem(THUMBNAIL_SETTINGS_KEY, JSON.stringify(settings))
+  } catch (e) {
+    console.error('Failed to save thumbnail settings:', e)
+  }
+}
 
 interface WorkspaceViewProps {
   workspace: Workspace
@@ -43,6 +75,36 @@ function mergeEnvVars(global: EnvVariable[] = [], workspace: EnvVariable[] = [])
 
 export function WorkspaceView({ workspace, terminals, focusedTerminalId, isActive }: Readonly<WorkspaceViewProps>) {
   const [showCloseConfirm, setShowCloseConfirm] = useState<string | null>(null)
+  const [thumbnailSettings, setThumbnailSettings] = useState<ThumbnailSettings>(loadThumbnailSettings)
+
+  // Handle thumbnail bar resize
+  const handleThumbnailResize = useCallback((delta: number) => {
+    setThumbnailSettings(prev => {
+      // Note: delta is negative when dragging up (making bar taller)
+      const newHeight = Math.min(MAX_THUMBNAIL_HEIGHT, Math.max(MIN_THUMBNAIL_HEIGHT, prev.height - delta))
+      const updated = { ...prev, height: newHeight }
+      saveThumbnailSettings(updated)
+      return updated
+    })
+  }, [])
+
+  // Toggle thumbnail bar collapse
+  const handleThumbnailCollapse = useCallback(() => {
+    setThumbnailSettings(prev => {
+      const updated = { ...prev, collapsed: !prev.collapsed }
+      saveThumbnailSettings(updated)
+      return updated
+    })
+  }, [])
+
+  // Reset thumbnail bar to default height
+  const handleThumbnailResetHeight = useCallback(() => {
+    setThumbnailSettings(prev => {
+      const updated = { ...prev, height: DEFAULT_THUMBNAIL_HEIGHT }
+      saveThumbnailSettings(updated)
+      return updated
+    })
+  }, [])
 
   // Categorize terminals
   const agentTerminal = terminals.find(t => t.agentPreset && t.agentPreset !== 'none')
@@ -152,12 +214,24 @@ export function WorkspaceView({ workspace, terminals, focusedTerminalId, isActiv
         ))}
       </div>
 
+      {/* Resize handle for thumbnail bar */}
+      {!thumbnailSettings.collapsed && (
+        <ResizeHandle
+          direction="vertical"
+          onResize={handleThumbnailResize}
+          onDoubleClick={handleThumbnailResetHeight}
+        />
+      )}
+
       <ThumbnailBar
         terminals={terminals}
         focusedTerminalId={mainTerminal?.id || null}
         onFocus={handleFocus}
         onAddTerminal={handleAddTerminal}
         showAddButton={true}
+        height={thumbnailSettings.height}
+        collapsed={thumbnailSettings.collapsed}
+        onCollapse={handleThumbnailCollapse}
       />
 
       {

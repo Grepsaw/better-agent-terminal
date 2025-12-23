@@ -17,6 +17,9 @@ interface Snippet {
 
 interface SnippetSidebarProps {
     isVisible: boolean
+    width?: number
+    collapsed?: boolean
+    onCollapse?: () => void
     onPasteToClipboard?: (content: string) => void
     onPasteToTerminal?: (content: string) => void
 }
@@ -90,7 +93,14 @@ function EditDialog({ snippet, isNew, onSave, onClose }: Readonly<EditDialogProp
     )
 }
 
-export function SnippetSidebar({ isVisible, onPasteToClipboard, onPasteToTerminal }: Readonly<SnippetSidebarProps>) {
+export function SnippetSidebar({
+    isVisible,
+    width = 280,
+    collapsed = false,
+    onCollapse,
+    onPasteToClipboard,
+    onPasteToTerminal
+}: Readonly<SnippetSidebarProps>) {
     const [snippets, setSnippets] = useState<Snippet[]>([])
     const [searchQuery, setSearchQuery] = useState('')
     const [editingSnippet, setEditingSnippet] = useState<Snippet | null>(null)
@@ -176,14 +186,34 @@ export function SnippetSidebar({ isVisible, onPasteToClipboard, onPasteToTermina
 
     if (!isVisible) return null
 
+    // Collapsed state - show icon bar
+    if (collapsed) {
+        return (
+            <div
+                className="collapsed-bar collapsed-bar-right"
+                onClick={onCollapse}
+                title="Expand Snippets"
+            >
+                <div className="collapsed-bar-icon">📝</div>
+            </div>
+        )
+    }
+
     return (
         <>
-            <aside className="snippet-sidebar">
+            <aside className="snippet-sidebar" style={{ width: `${width}px`, minWidth: `${width}px` }}>
                 <div className="snippet-sidebar-header">
                     <h3>📝 Snippets</h3>
-                    <button className="snippet-add-btn" onClick={() => setIsCreating(true)} title="New Snippet">
-                        +
-                    </button>
+                    <div className="snippet-header-actions">
+                        <button className="snippet-add-btn" onClick={() => setIsCreating(true)} title="New Snippet">
+                            +
+                        </button>
+                        {onCollapse && (
+                            <button className="snippet-collapse-btn" onClick={onCollapse} title="Collapse Panel">
+                                »
+                            </button>
+                        )}
+                    </div>
                 </div>
 
                 <div className="snippet-sidebar-search">
