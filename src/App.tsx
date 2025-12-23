@@ -7,7 +7,43 @@ import { SettingsPanel } from './components/SettingsPanel'
 import { AboutPanel } from './components/AboutPanel'
 import { SnippetSidebar } from './components/SnippetPanel'
 import { WorkspaceEnvDialog } from './components/WorkspaceEnvDialog'
+import { ResizeHandle } from './components/ResizeHandle'
 import type { AppState, EnvVariable } from './types'
+
+// Panel settings interface
+interface PanelSettings {
+  snippetSidebar: {
+    width: number
+    collapsed: boolean
+  }
+}
+
+const PANEL_SETTINGS_KEY = 'better-terminal-panel-settings'
+const DEFAULT_SNIPPET_WIDTH = 280
+const MIN_SNIPPET_WIDTH = 180
+const MAX_SNIPPET_WIDTH = 500
+
+function loadPanelSettings(): PanelSettings {
+  try {
+    const saved = localStorage.getItem(PANEL_SETTINGS_KEY)
+    if (saved) {
+      return JSON.parse(saved)
+    }
+  } catch (e) {
+    console.error('Failed to load panel settings:', e)
+  }
+  return {
+    snippetSidebar: { width: DEFAULT_SNIPPET_WIDTH, collapsed: false }
+  }
+}
+
+function savePanelSettings(settings: PanelSettings): void {
+  try {
+    localStorage.setItem(PANEL_SETTINGS_KEY, JSON.stringify(settings))
+  } catch (e) {
+    console.error('Failed to save panel settings:', e)
+  }
+}
 
 export default function App() {
   const [state, setState] = useState<AppState>(workspaceStore.getState())
@@ -16,6 +52,37 @@ export default function App() {
   const [envDialogWorkspaceId, setEnvDialogWorkspaceId] = useState<string | null>(null)
   // Snippet sidebar is always visible by default
   const [showSnippetSidebar] = useState(true)
+  // Panel settings for resizable panels
+  const [panelSettings, setPanelSettings] = useState<PanelSettings>(loadPanelSettings)
+
+  // Handle snippet sidebar resize
+  const handleSnippetResize = useCallback((delta: number) => {
+    setPanelSettings(prev => {
+      // Note: delta is negative when dragging left (making sidebar wider)
+      const newWidth = Math.min(MAX_SNIPPET_WIDTH, Math.max(MIN_SNIPPET_WIDTH, prev.snippetSidebar.width - delta))
+      const updated = { ...prev, snippetSidebar: { ...prev.snippetSidebar, width: newWidth } }
+      savePanelSettings(updated)
+      return updated
+    })
+  }, [])
+
+  // Toggle snippet sidebar collapse
+  const handleSnippetCollapse = useCallback(() => {
+    setPanelSettings(prev => {
+      const updated = { ...prev, snippetSidebar: { ...prev.snippetSidebar, collapsed: !prev.snippetSidebar.collapsed } }
+      savePanelSettings(updated)
+      return updated
+    })
+  }, [])
+
+  // Reset snippet sidebar to default width
+  const handleSnippetResetWidth = useCallback(() => {
+    setPanelSettings(prev => {
+      const updated = { ...prev, snippetSidebar: { ...prev.snippetSidebar, width: DEFAULT_SNIPPET_WIDTH } }
+      savePanelSettings(updated)
+      return updated
+    })
+  }, [])
 
   useEffect(() => {
     const unsubscribe = workspaceStore.subscribe(() => {
@@ -117,8 +184,19 @@ export default function App() {
           </div>
         )}
       </main>
+      {/* Resize handle for snippet sidebar */}
+      {showSnippetSidebar && !panelSettings.snippetSidebar.collapsed && (
+        <ResizeHandle
+          direction="horizontal"
+          onResize={handleSnippetResize}
+          onDoubleClick={handleSnippetResetWidth}
+        />
+      )}
       <SnippetSidebar
         isVisible={showSnippetSidebar}
+        width={panelSettings.snippetSidebar.width}
+        collapsed={panelSettings.snippetSidebar.collapsed}
+        onCollapse={handleSnippetCollapse}
         onPasteToTerminal={handlePasteToTerminal}
       />
       {showSettings && (
