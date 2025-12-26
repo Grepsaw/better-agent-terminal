@@ -67,7 +67,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: release-win
-          path: release/*.zip
+          path: |
+            release/*.zip
+            release/*.exe
 
       - name: Upload macOS artifact
         if: matrix.platform == 'mac'
